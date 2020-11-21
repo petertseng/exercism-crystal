@@ -1,0 +1,31 @@
+name: Tests
+on:
+  pull_request:
+  push:
+    branches:
+    - master
+    - gha
+  schedule:
+    # Weekly.
+    - cron: "0 0 * * 0"
+
+jobs:
+  track-config:
+    name: Check track configuration
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Fetch
+        run: bin/fetch-configlet
+      - name: Lint
+        run: bin/configlet lint .
+  exercises:
+    name: Check exercises
+    runs-on: ubuntu-latest
+    # idea from https://github.com/actions/starter-workflows/blob/master/ci/crystal.yml
+    container:
+      image: crystallang/crystal
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run tests
+        run: make test
